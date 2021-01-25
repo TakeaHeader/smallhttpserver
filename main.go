@@ -67,8 +67,10 @@ func (context *HttpContext) handler(conn net.Conn)  {
 	rep.Version = req.Version
 	if handler != nil {
 		handler.Service(req,rep)
+		rep.Code = OK
+	}else{
+		rep.Code = NOT_FOUND
 	}
-	rep.Code = NOT_FOUND
 	rep.printSteam()
 }
 
@@ -117,7 +119,14 @@ func (rep *Rep) printSteam()  {
 	rep.getOutputSteam().Write([]byte(fmt.Sprintf("%s %d %s\r\n",rep.Version,rep.Code,"ok")))
 	rep.getOutputSteam().Write([]byte(fmt.Sprintf("Content-Type: %s\r\n","text/html")))
 	rep.getOutputSteam().Write([]byte(string("\r\n")))
-	rep.getOutputSteam().Write([]byte(string("<html><header><meta charset='utf-8'/></header><b>你好</b></html>")))
+	rep.getOutputSteam().Write([]byte(string(`
+<html>
+    <head>
+        <meta charset='utf-8'/>
+    </head>
+    <b style="color:red;">Hello World</b>
+</html>
+`)))
 	rep.getOutputSteam().Flush()
 }
 
